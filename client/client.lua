@@ -26,21 +26,21 @@ function enableRadio(enable)
 end
 
 RegisterNUICallback('volup', function(data, cb)
-  local volume = exports["pma-voice"]:getRadioVolume() 
-  local newvol = volume + 0.1
-  if volume < 0.9 then
+  local volume = exports["pma-voice"]:getRadioVolume() * 100
+  local newvol = volume + 10
+  if volume < 90 then
     exports["pma-voice"]:setRadioVolume(newvol)
-    exports['mythic_notify']:SendAlert('success', 'Radio volume set to ' .. newvol )
+    print('Radio increased to ' .. newvol )
   end
   cb('ok')
 end)
 
 RegisterNUICallback('voldown', function(data, cb)
-  local volume = exports["pma-voice"]:getRadioVolume()
-  local newvol = volume - 0.1
-  if volume > 0.2 then
+  local volume = exports["pma-voice"]:getRadioVolume() * 100
+  local newvol = volume- 10
+  if volume > 10 then
     exports["pma-voice"]:setRadioVolume(newvol)
-    exports['mythic_notify']:SendAlert('success', 'Radio volume set to ' .. newvol )
+    print('Radio decreased to ' .. newvol )
   end
   cb('ok')
 end)
