@@ -48,22 +48,24 @@ RegisterNUICallback('joinRadio', function(data, cb)
     local PlayerData = ESX.GetPlayerData(_source)
 
     if tonumber(data.channel) then
-        if tonumber(data.channel) <= Config.RestrictedChannels then
-            if PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
+        if tonumber(data.channel) == LocalPlayer.state.radioChannel then
+            exports['mythic_notify']:SendAlert('error', Config.messages['you_on_radio'] .. data.channel .. ' MHz </b>')
+        else        
+            if tonumber(data.channel) <= Config.RestrictedChannels then
+                if PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
+                    exports["pma-voice"]:setVoiceProperty("radioEnabled", true)
+                    exports["pma-voice"]:setRadioChannel(tonumber(data.channel))
+                    exports['mythic_notify']:SendAlert('inform', Config.messages['joined_to_radio'] .. data.channel .. ' MHz </b>')
+                elseif not PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
+                    exports['mythic_notify']:SendAlert('error', Config.messages['restricted_channel_error'])
+                end
+            end
+            if tonumber(data.channel) > Config.RestrictedChannels then
                 exports["pma-voice"]:setVoiceProperty("radioEnabled", true)
                 exports["pma-voice"]:setRadioChannel(tonumber(data.channel))
                 exports['mythic_notify']:SendAlert('inform', Config.messages['joined_to_radio'] .. data.channel .. ' MHz </b>')
-            elseif not PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
-                exports['mythic_notify']:SendAlert('error', Config.messages['restricted_channel_error'])
             end
         end
-        if tonumber(data.channel) > Config.RestrictedChannels then
-            exports["pma-voice"]:setVoiceProperty("radioEnabled", true)
-            exports["pma-voice"]:setRadioChannel(tonumber(data.channel))
-            exports['mythic_notify']:SendAlert('inform', Config.messages['joined_to_radio'] .. data.channel .. ' MHz </b>')
-        end
-    else
-        exports['mythic_notify']:SendAlert('error', Config.messages['you_on_radio'] .. data.channel .. ' MHz </b>')
     end
     cb('ok')
 end)
