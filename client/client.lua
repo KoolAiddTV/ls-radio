@@ -3,6 +3,7 @@ local radioMenu   = false
 
 function enableRadio(enable)
     SetNuiFocus(true, true)
+    SetNuiFocusKeepInput(true)
     radioMenu = enable
     SendNUIMessage({
         type = "enableui",
@@ -38,11 +39,11 @@ RegisterNUICallback('joinRadio', function(data, cb)
 
     if tonumber(data.channel) then
         if tonumber(data.channel) <= Config.RestrictedChannels then
-            if(PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
+            if PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
                 exports["pma-voice"]:setVoiceProperty("radioEnabled", true)
                 exports["pma-voice"]:setRadioChannel(tonumber(data.channel))
                 exports['mythic_notify']:SendAlert('inform', Config.messages['joined_to_radio'] .. data.channel .. ' MHz </b>')
-            elseif not (PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' or PlayerData.job.name == 'fire') then
+            elseif not PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
                 exports['mythic_notify']:SendAlert('error', Config.messages['restricted_channel_error'])
             end
         end
