@@ -11,10 +11,11 @@ function enableRadio(enable)
     })
     CreateThread(function()
         while radioMenu do
-            DisableControlAction(0, 1, guiEnabled) -- LookLeftRight
-            DisableControlAction(0, 2, guiEnabled) -- LookUpDown
-            DisableControlAction(0, 142, guiEnabled) -- MeleeAttackAlternate
-            DisableControlAction(0, 106, guiEnabled) -- VehicleMouseControlOverride
+            DisableControlAction(0, 1, radioMenu) -- LookLeftRight
+            DisableControlAction(0, 2, radioMenu) -- LookUpDown
+            DisableControlAction(0, 106, radioMenu) -- VehicleMouseControlOverride
+            DisableControlAction(0, 142, radioMenu) -- MeleeAttackAlternate
+            DisableControlAction(0, 200, radioMenu) -- Escape key
             Wait(5)
         end
         return
@@ -82,6 +83,7 @@ end)
 RegisterNUICallback('escape', function(data, cb)
     enableRadio(false)
     SetNuiFocus(false, false)
+    SetNuiFocusKeepInput(false)
     cb('ok')
 end)
 
