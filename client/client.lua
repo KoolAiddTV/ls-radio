@@ -9,6 +9,16 @@ function enableRadio(enable)
         type = "enableui",
         enable = enable
     })
+    CreateThread(function()
+        while radioMenu do
+            DisableControlAction(0, 1, guiEnabled) -- LookLeftRight
+            DisableControlAction(0, 2, guiEnabled) -- LookUpDown
+            DisableControlAction(0, 142, guiEnabled) -- MeleeAttackAlternate
+            DisableControlAction(0, 106, guiEnabled) -- VehicleMouseControlOverride
+            Wait(5)
+        end
+        return
+    end)
 end
 
 RegisterNUICallback('volup', function(data, cb)
@@ -59,9 +69,11 @@ RegisterNUICallback('joinRadio', function(data, cb)
 end)
 
 RegisterNUICallback('leaveRadio', function(data, cb)
-    exports["pma-voice"]:setRadioChannel(0)
-    exports["pma-voice"]:setVoiceProperty("radioEnabled", false)
-    exports['mythic_notify']:SendAlert('inform', Config.messages['you_leave'])
+    if LocalPlayer.state.radioChannel > 0 then
+        exports["pma-voice"]:setRadioChannel(0)
+        exports["pma-voice"]:setVoiceProperty("radioEnabled", false)
+        exports['mythic_notify']:SendAlert('inform', Config.messages['you_leave'] .. LocalPlayer.state.radioChannel)
+    end
     cb('ok')
 end)
 
@@ -81,22 +93,4 @@ AddEventHandler('ls-radio:onRadioDrop', function(source)
     exports["pma-voice"]:setRadioChannel(0)
     exports["pma-voice"]:setVoiceProperty("radioEnabled", false)
     exports['mythic_notify']:SendAlert('inform', Config.messages['you_leave'])
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        if radioMenu then
-            DisableControlAction(0, 1, guiEnabled) -- LookLeftRight
-            DisableControlAction(0, 2, guiEnabled) -- LookUpDown
-            DisableControlAction(0, 142, guiEnabled) -- MeleeAttackAlternate
-            DisableControlAction(0, 106, guiEnabled) -- VehicleMouseControlOverride
-
-            if IsDisabledControlJustReleased(0, 142) then -- MeleeAttackAlternate
-                SendNUIMessage({
-                    type = "click"
-                })
-            end
-        end
-        Citizen.Wait(0)
-    end
 end)
